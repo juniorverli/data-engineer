@@ -1,0 +1,21 @@
+services:
+  app:
+    container_name: app
+    build: ./python/
+    command: sh -c "sleep 30s ; python3 ./main.py"
+    depends_on:
+      mysql:
+        condition: service_healthy
+  mysql:
+    container_name: db_MYSQL
+    build: ./mysql/
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'db'
+      MYSQL_ROOT_PASSWORD: 'root'
+    ports:
+      - '3306:3306'
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 40s
+      retries: 10  
